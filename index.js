@@ -4,18 +4,18 @@ const { json } = require('express');
 const app = express();
 app.use(json());
 
-employees = [
+employeesArray = [
     { empId: 1, employeeName: "Zouhair ETTARAK", salary: 9000 },
     { empId: 2, employeeName: "Hafssa ELMESKANI", salary: 2000 },
     { empId: 3, employeeName: "Rachida ELHIDAOUI", salary: 6000 },
-];
+]
 
 app.get('/', (req, res) => {
-    res.send(employees);
+    res.send(employeesArray);
 });
 
 app.get('/employees/:id', (req, res) => {
-    const findEmployee = employees.find(element => element.empId == req.params.id)
+    const findEmployee = employeesArray.find(element => element.empId == req.params.id)
     if (!findEmployee) {
         res.send("Employee Not Found");
     }
@@ -44,7 +44,7 @@ app.post('/employees', (req, res) => {
         employeeName: req.body.employeeName,
         salary: req.body.salary
     }
-    employees.push(employee);
+    employeesArray.push(employee);
     res.send(employee)
 });
 
@@ -57,7 +57,7 @@ function employeePutValidate(employee) {
 }
 // PUT Route : http://localhost:3000/employees/id
 app.put('/employees/:id', (req, res) => {
-    const findEmployee = employees.find(element => element.empId == req.params.id)
+    const findEmployee = employeesArray.find(element => element.empId == req.params.id)
     if (!findEmployee) {
        return  res.send("Employee Not Found");
     }
@@ -67,6 +67,16 @@ app.put('/employees/:id', (req, res) => {
     }
     findEmployee.employeeName = req.body.employeeName;
     res.send(findEmployee);
+});
+
+app.delete('/employees/:id', (req, res)=>{
+    const findEmployee = employeesArray.find(element => element.empId == req.params.id)
+    if (!findEmployee) {
+        return res.send("Employee Not Found");
+    }
+    const employeeIndex = employeesArray.indexOf(findEmployee);
+    employeesArray.splice(employeeIndex, 1);
+    res.send('This Employee : = '+ findEmployee.employeeName + ' Deleted With SuccesFully');
 });
 
 const port = process.env.port || 3000
