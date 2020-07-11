@@ -1,8 +1,10 @@
 const express = require('express');
 const Joi = require('joi');
 const { json } = require('express');
+const loggerMidlware =require('./logger/logginMiddelware');
 const app = express();
 app.use(json());
+app.use(loggerMidlware);
 
 employeesArray = [
     { empId: 1, employeeName: "Zouhair ETTARAK", salary: 9000 },
