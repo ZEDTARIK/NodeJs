@@ -13,31 +13,56 @@ mongose.connect('mongodb://localhost/employees', {
 // Schema  = Structure Employee => Fields and Types 
 
 const employeeSchema = new mongose.Schema({
-    FullName: {type: String, required: true },
-    Age: Number,
-    Departement: [String],
+    FullName: { type: String, required: true, trim: true },
+    Age: { type: Number, min: [18, 'too small Age'], max: 60 },
+    Departement: {
+        type: Array,
+        validate: {
+            validator: function (params) {
+                return params.length > 0
+            },
+            message: 'You must Insert a Departement'
+        }
+    },
     Date: { type: Date, default: Date.now },
-    IsApproved: Boolean
+    IsApproved: Boolean,
+    Job: {
+        type: String,
+        uppercase: true,
+        enum: ['IT', 'HR', 'Sales'],
+        required: true
+    },
+    Salary: {
+        type: Number,
+        required: function () {
+            return this.IsApproved = true;
+        }
+    }
 });
 
 // Using Schema for Contructure new Employee
 const Employee = mongose.model('Employee', employeeSchema);
 
-
 // --------------------------- Create New Employee  ---------------------------------
 async function createEmployee() {
     // Create New Employee 
     const NewEmployee = new Employee({
-        FullName: 'Hafssa ElMESSKANI',
-        Age: 30,
-        Departement: ['JavaScript', 'Admin DataBase'],
-        IsApproved: true
+        FullName: 'Zouhair ET-TARAK',
+        Age: 20,
+        Departement: ['JavaScript Team ', 'Angular Team'],
+        IsApproved: true,
+        Job: 'HR',
+        Salary: 2500
     });
-    const result = await NewEmployee.save();
-    console.log(result);
+    try {
+        const result = await NewEmployee.save();
+        console.log(result);
+    } catch (error) {
+        console.error(error);
+    }
 }
 
- //createEmployee();
+//createEmployee();
 
 // --------------------------- Get List Employee  ---------------------------------
 
